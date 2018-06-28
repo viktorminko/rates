@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  mywebserver:
+    build: ./
+    ports:
+      - ${PORT}:${PORT}
+    command:
+      - ./app
+      - -update_duration
+      - ${UPDATE_DURATION}
+      - -get_pairs_url
+      - ${GET_PAIRS_URL}
+      - -update_url
+      - ${UPDATE_URL}
+      - -api_endpoint
+      - ${API_ENDPOINT}
+      - -timeframe
+      - ${TIMEFRAME}
+      - -pairs
+      - ${PAIRS}
+      - -port
+      - ${PORT}
