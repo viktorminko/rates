@@ -31,7 +31,7 @@ By default app returns data on 0.0.0.0:3512
 Run docker image with default config
 
 ```
-docker run viktorminko/rates
+docker run -p 3512:3512 viktorminko/rates
 ```
 
 ### Docker compose
