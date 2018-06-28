@@ -70,8 +70,8 @@ func TestUpdateAverages(t *testing.T) {
 				}
 			}
 
-			if a[k] != test.ea {
-				t.Fatalf("unexpected average, expected: %v, got: %v", test.ea, a[k])
+			if v, _ := a.Load(k); v != test.ea {
+				t.Fatalf("unexpected average, expected: %v, got: %v", test.ea, v)
 			}
 
 			if !reflect.DeepEqual(q[k], cVals) {

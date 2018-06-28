@@ -14,6 +14,8 @@ func UpdateAverages(
 	timeDiff bool,
 ) {
 
+	a := average
+
 	n := len((*q)[i])
 	fn := float64(n)
 
@@ -21,20 +23,22 @@ func UpdateAverages(
 		(*q)[i] = []float64{}
 	}
 
-	if _, ok := (*average)[i]; !ok {
-		(*average)[i] = v
+	if _, ok := a.Load(i); !ok {
+		a.Store(i,v)
 	}
 
 	if timeDiff || n == 0 {
 		(*q)[i] = append((*q)[i], v)
-		(*average)[i] = ((*average)[i]*fn + v) / (fn + 1)
+		t,_ :=  a.Load(i)
+		a.Store(i, (t.(float64)*fn + v) / (fn + 1))
 
 		return
 	}
 	f := (*q)[i][0]
 	(*q)[i] = (*q)[i][1:]
 	(*q)[i] = append((*q)[i], v)
-	(*average)[i] = (*average)[i] - f/(fn) + v/(fn)
+	t,_ :=  a.Load(i)
+	a.Store(i, t.(float64) - f/(fn) + v/(fn))
 
 	return
 }

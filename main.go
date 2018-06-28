@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"sync"
 )
 
 const defDuration = 5 * time.Second
@@ -38,7 +39,7 @@ type RateTime struct {
 	Time time.Time
 }
 
-type Averages map[string]float64
+type Averages = sync.Map
 
 func RunUpdater(url url.URL, duration time.Duration, pairs []string) (<-chan RateTime) {
 
@@ -99,9 +100,11 @@ func Handler(chSignal chan<- struct{}, chOut <-chan Averages, w http.ResponseWri
 	averages := <-chOut
 
 	strAverages := map[string]string{}
-	for k, v := range averages {
-		strAverages[k] = fmt.Sprintf("%.3f", v)
-	}
+
+	averages.Range(func(k, v interface{}) bool {
+		strAverages[k.(string)] = fmt.Sprintf("%.3f", v)
+		return true
+	})
 
 	js, err := json.MarshalIndent(strAverages, "", "   ")
 	if err != nil {
