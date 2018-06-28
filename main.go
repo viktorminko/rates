@@ -8,7 +8,6 @@ import (
 	"strings"
 	"net/http"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"sync"
 )
@@ -99,14 +98,14 @@ func Handler(chSignal chan<- struct{}, chOut <-chan Averages, w http.ResponseWri
 
 	averages := <-chOut
 
-	strAverages := map[string]string{}
+	strAverages := map[string]float64{}
 
 	averages.Range(func(k, v interface{}) bool {
-		strAverages[k.(string)] = fmt.Sprintf("%.3f", v)
+		strAverages[k.(string)] = v.(float64)
 		return true
 	})
 
-	js, err := json.MarshalIndent(strAverages, "", "   ")
+	js, err := json.Marshal(strAverages)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
